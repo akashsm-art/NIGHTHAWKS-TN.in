@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+  />
+  <title>Nighthawks FF | Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Sliding animation for forms */
+    .form-slide {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .form-slide.hidden {
+      opacity: 0;
+      transform: translateX(100%);
+      display: none; /* Fully hide when animation ends */
+    }
+  </style>
+</head>
+
+<body class="auth-bg">
+
+<div class="auth-card">
+
+  <img src="nighthawks-logo3.png" class="login-logo" alt="Nighthawks Logo">
+
+  <input
+    id="mobile"
+    type="tel"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    maxlength="10"
+    placeholder="+91 Mobile Number "
+    oninput="checkMobileStatus()"
+  />
+
+  <!-- Register Form (for new users) -->
+  <div id="registerForm" class="form-slide hidden">
+    <div class="input-box">
+      <span class="icon user-icon"></span>
+      <input id="team" placeholder="Team Name">
+    </div>
+    <div class="input-box">
+      <span class="icon lock-icon"></span>
+      <input id="newPassword" type="password" placeholder="Set Password" />
+    </div>
+    <button onclick="register()" class="glow-btn">Register</button>
+  </div>
+
+  <!-- Login Form (for existing users) -->
+  <!-- Login Form (for existing users) -->
+<div id="loginForm" class="form-slide hidden">
+  <div class="input-box">
+    <span class="icon user-icon"></span>
+    <input id="loginTeam" placeholder="Team Name">
+  </div>
+  <div class="input-box">
+    <span class="icon lock-icon"></span>
+    <input id="password" type="password" placeholder="Password" />
+  </div>
+  <button class="neon-btn" onclick="login()">Login</button>
+
+</div>
+
+  <p style="margin-top:12px; text-align:center;">
+    <a href="#" onclick="openForgotPassword()">Forgot password?</a>
+  </p>
+
+  <p id="msg"></p>
+
+</div>
+
+<div id="profileModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <h2 style="color:var(--primary-blue);">Team Profile</h2>
+    
+    <div class="profile-content">
+      <div style="text-align:center; margin-bottom:15px;">
+        <img id="displayTeamLogo" src="" alt="Team Logo" 
+             style="width:100px; height:100px; border-radius:50%; border:2px solid #00e5ff; object-fit:cover;">
+      </div>
+
+      <div class="input-group">
+        <label style="color:#aaa; font-size:12px;">Team Name</label>
+        <h3 id="displayTeamName" style="margin:5px 0; color:#fff;">--</h3>
+      </div>
+
+      <div class="input-group" style="margin-top:15px; text-align:left;">
+        <label style="color:#aaa; font-size:12px;">Squad Members</label>
+        <ul id="displayPlayerList" style="list-style:none; padding:0; margin-top:5px; color:#ddd;">
+          </ul>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:20px; justify-content:center;">
+      <button onclick="closeProfile()" style="background:#333; width:auto;">Close</button>
+      <button onclick="enableEditMode()" style="background:var(--primary-blue); width:auto;">Edit Details</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  // Auto-redirect if already logged in
+  window.addEventListener('load', () => {
+    if (localStorage.getItem('loggedInUser')) {
+      window.location.href = 'dashboard.html'; // Redirect to dashboard
+    }
+  });
+</script>
+
+</body>
+</html>

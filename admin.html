@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <title>Nighthawks FF | Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+<div class="admin-panel">
+
+  <script>
+    if (localStorage.getItem("admin") !== "true") {
+      window.location.href = "admin-login.html";
+    }
+  </script>
+
+  <div class="nav-bar">
+    <div class="nav-title" style="color:#fff; font-weight:bold; font-size:20px;">
+      <span style="color:var(--primary-blue);">Nighthawks</span> Admin
+    </div>
+    <div class="nav-right">
+      <button onclick="adminLogout()" class="red-glow-btn" style="padding: 6px 12px; font-size: 12px;">Logout</button>
+    </div>
+  </div>
+
+  <div class="page">
+    
+    <div class="admin-tabs">
+      <button onclick="showTab('matches')" class="active">Matches</button>
+      <button onclick="showTab('users')">Users</button>
+      <button onclick="showTab('teams')">Teams & PDF</button>
+      <button onclick="showTab('feedbacks')">Feedbacks</button>
+      <button onclick="showTab('settings')">Settings</button>
+    </div>
+
+    <div id="tab-matches" class="tab-content active" style="display:block;">
+      
+      <div class="admin-control" style="border-left: 4px solid red;">
+        <h3 style="color:red;">💀 Update Kills</h3>
+        <input id="killTeam" placeholder="Team Name">
+        <input id="killCount" type="number" placeholder="Kills">
+        <button class="red-glow-btn" style="width:100%; margin-top:10px;" onclick="saveKills()">
+          Save Kills
+        </button>
+      </div>
+
+      <div class="admin-control">
+        <h3>Create New Match</h3>
+        
+        <label style="color:#aaa; font-size:12px;">Match Title</label>
+        <input id="m-title" placeholder="e.g. Daily Scrims #1">
+        
+        <label style="color:#aaa; font-size:12px;">Map Name</label>
+        <input id="m-map" placeholder="e.g. Bermuda / Purgatory">
+        
+        <label style="color:#00e5ff; font-size:12px; font-weight:bold;">IDP Time (ID/Pass)</label>
+        <input id="m-time" placeholder="e.g. 7:30 PM">
+
+        <label style="color:#aaa; font-size:12px;">Live Stream Link</label>
+<input id="m-link" placeholder="Paste YouTube/Loco Channel Link here">
+
+        <button onclick="saveMatch()" class="glow-btn" style="width:100%; margin-top:10px;">Save Match</button>
+      </div>
+      
+      <h3>Existing Matches</h3>
+      <div id="adminMatchList"></div>
+    </div>
+
+    <div id="tab-users" class="tab-content">
+      <h3>Registered Users</h3>
+      <div id="adminUserList"></div>
+    </div>
+
+    <div id="tab-teams" class="tab-content">
+      <div class="admin-control">
+        <h3>Registration Control</h3>
+
+       <label style="color:#aaa;font-size:12px;">Countdown Minutes</label>
+<input id="countdownMinutes" type="number" placeholder="e.g. 30" 
+       style="width:100%;margin-bottom:10px;">
+
+<div style="display:flex; gap:10px;">
+  <button id="startBtn" onclick="openRegistration()" class="glow-btn">
+  Start Countdown
+</button>
+
+
+  <button onclick="closeRegistration()" class="red-glow-btn" style="flex:1;">
+    Stop Countdown
+  </button>
+</div>
+
+
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <button onclick="toggleReg(true)" class="glow-btn" style="flex:1;">Open Reg</button>
+          <button onclick="toggleReg(false)" class="red-glow-btn" style="flex:1;">Close Reg</button>
+        </div>
+        <p id="regStatusDisplay" style="font-weight:bold; color:#aaa;"></p>
+      </div>
+
+      <div class="admin-control">
+        <h3>Downloads</h3>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="downloadAdminPDF()" class="glow-btn" style="flex:1;">Teams PDF</button>
+          <button onclick="downloadUsersPDF()" class="glow-btn" style="flex:1;">Users PDF</button>
+        </div>
+      </div>
+
+      <h3>Registered Teams</h3>
+      <div id="adminTeamList"></div>
+    </div>
+
+    <div id="tab-feedbacks" class="tab-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h3>Player Messages</h3>
+        <button onclick="clearFeedbacks()" class="red-glow-btn" style="padding:6px 12px; font-size:12px;">Clear All</button>
+      </div>
+      <div id="adminFeedbackList"></div>
+    </div>
+
+    <div id="tab-settings" class="tab-content">
+      
+      <div class="admin-control" style="border-left: 4px solid gold;">
+        <h3 style="color:gold;">📢 Announcement</h3>
+        <input id="announcementText" placeholder="Type announcement..." style="width:100%;padding:10px;margin-top:5px;">
+        <div style="display:flex; gap:10px; margin-top:10px;">
+           <button class="gold-glow-btn" onclick="saveAnnouncement()" style="flex:1;">Save</button>
+           <button class="red-glow-btn" onclick="clearAnnouncement()" style="flex:1;">Clear</button>
+        </div>
+      </div>
+
+      <div class="admin-control">
+        <h3>Payment Settings</h3>
+        <select id="paymentMode" onchange="savePaymentSettings()">
+          <option value="free">Free Mode</option>
+          <option value="paid">Paid Mode (QR)</option>
+        </select>
+
+        <div id="qrSection" style="display:none; margin-top:10px;">
+          <label>QR Code Image URL:</label>
+          <input id="qrCodeUrl" placeholder="https://..." oninput="savePaymentSettings()">
+          <img id="previewQR" src="" style="width:100px; margin-top:5px; border-radius:5px; border:1px solid #333;">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+   <script src="script.js"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+       if(typeof showTab === 'function') {
+          showTab('matches');
+       }
+    });
+  </script>
+
+</div>  <!-- CLOSE admin-panel -->
+</body>
+</html>
