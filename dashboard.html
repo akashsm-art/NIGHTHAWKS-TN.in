@@ -532,8 +532,17 @@ a.yt-link:hover {
       document.getElementById('menuOverlay').classList.remove('active');
     }
   </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script src="script.js"></script>
+<script>
+const supabase = window.supabase.createClient(
+  "https://gtqxjuxppfuzorxlmmqq.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0cXhqdXhwcGZ1em9yeGxtbXFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NzQ4MzgsImV4cCI6MjA4NjU1MDgzOH0.jzLkIGmYDZCBQ9pPUY5LgYA4ImYIYwzvQ5bh2RMEXGc"
+);
+</script>
+
+<script src="script.js"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   if (localStorage.getItem("openProfileAfterLogin") === "true") {
@@ -602,7 +611,18 @@ document.addEventListener("DOMContentLoaded", function () {
   <div class="modal-box">
     <h2 style="color:#00e5ff;">Match Results</h2>
 
-    <div id="standingsList"></div>
+   <div id="standingsList">
+
+  <iframe
+    src="https://www.instagram.com/p/ABC123xyz/embed"
+    width="100%"
+    height="480"
+    frameborder="0"
+    scrolling="no">
+  </iframe>
+
+</div>
+
 
     <button onclick="closeStandings()" class="neon-btn" style="margin-top:15px;">
       Close

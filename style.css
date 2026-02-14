@@ -2631,3 +2631,12 @@ html, body {
 
   box-shadow: 0 4px 20px rgba(0,229,255,0.15) !important;
 }
+
+
+#standingsList iframe {
+  width: 100%;
+  max-width: 400px;
+  height: 500px;
+  border: none;
+  border-radius: 12px;
+}

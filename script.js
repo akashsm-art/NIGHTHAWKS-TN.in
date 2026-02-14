@@ -374,6 +374,10 @@ function submitMatch(matchId) {
   if(userIndex > -1) {
       users[userIndex].players = [p1, p2, p3, p4];
       setData("users", users);
+      supabase.from('users').insert([
+  { team, mobile, password }
+]);
+
   }
 
   // Check Registration
