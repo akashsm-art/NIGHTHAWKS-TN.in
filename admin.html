@@ -1,178 +1,340 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="theme-color" content="#000000">
-<link rel="manifest" href="manifest.json">
-
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>Nighthawks FF | Admin Panel</title>
+  <meta name="description" content="Nighthawks FF Admin Panel — Manage matches, users, teams, and tournament settings.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
-<div class="admin-panel">
-
   <script>
     if (localStorage.getItem("admin") !== "true") {
       window.location.href = "admin-login.html";
     }
   </script>
 
+  <!-- Dynamic particle canvas -->
+  <canvas id="canvas-particles"></canvas>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Navbar -->
   <div class="nav-bar">
-    <div class="nav-title" style="color:#fff; font-weight:bold; font-size:20px;">
-      <span style="color:var(--primary-blue);">Nighthawks</span> Admin
+    <div class="nav-title">
+      <img src="nighthawks-logo3.png" alt="NHK">
+      <span class="glitch-header" data-text="Admin Panel">Admin Panel</span>
     </div>
     <div class="nav-right">
-      <button onclick="adminLogout()" class="red-glow-btn" style="padding: 6px 12px; font-size: 12px;">Logout</button>
+      <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+      <button onclick="adminLogout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
   </div>
 
-  <div class="page">
+  <div class="admin-layout">
     
-    <div class="admin-tabs">
-      <button onclick="showTab('matches')" class="active">Matches</button>
-      <button onclick="showTab('users')">Users</button>
-      <button onclick="showTab('teams')">Teams & PDF</button>
-      <button onclick="showTab('feedbacks')">Feedbacks</button>
-      <button onclick="showTab('settings')">Settings</button>
+    <!-- Sidebar (Desktop) -->
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-title">Navigation</div>
+      <a href="javascript:void(0)" onclick="showTab('overview')" class="active" id="nav-overview">
+        <i class="fas fa-chart-pie"></i> Overview
+      </a>
+      <a href="javascript:void(0)" onclick="showTab('matches')" id="nav-matches">
+        <i class="fas fa-gamepad"></i> Matches
+      </a>
+      <a href="javascript:void(0)" onclick="showTab('users')" id="nav-users">
+        <i class="fas fa-users"></i> Users
+      </a>
+      <a href="javascript:void(0)" onclick="showTab('teams')" id="nav-teams">
+        <i class="fas fa-shield-alt"></i> Teams & PDF
+      </a>
+      <a href="javascript:void(0)" onclick="showTab('feedbacks')" id="nav-feedbacks">
+        <i class="fas fa-comment-dots"></i> Messages
+      </a>
+      <a href="javascript:void(0)" onclick="showTab('settings')" id="nav-settings">
+        <i class="fas fa-cog"></i> Settings
+      </a>
+
+      <!-- Next-Gen HUD Configuration Panel -->
+      <div id="hudThemeContainer" class="hud-config-panel" style="margin:24px 14px 10px;"></div>
+      <div id="hudSFXContainer" class="hud-config-panel" style="margin:0 14px 24px;"></div>
     </div>
 
-    <div id="tab-matches" class="tab-content active" style="display:block;">
-      
-      <div class="admin-control" style="border-left: 4px solid red;">
-        <h3 style="color:red;">💀 Update Kills</h3>
-        <input id="killTeam" placeholder="Team Name">
-        <input id="killCount" type="number" placeholder="Kills">
-        <button class="red-glow-btn" style="width:100%; margin-top:10px;" onclick="saveKills()">
-          Save Kills
-        </button>
+    <!-- Mobile Tabs -->
+    <div class="admin-tabs" style="display:none;">
+      <button onclick="showTab('overview')" class="active">📊 Overview</button>
+      <button onclick="showTab('matches')">🎮 Matches</button>
+      <button onclick="showTab('users')">👥 Users</button>
+      <button onclick="showTab('teams')">🛡️ Teams</button>
+      <button onclick="showTab('feedbacks')">💬 Messages</button>
+      <button onclick="showTab('settings')">⚙️ Settings</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-main">
+
+      <!-- ═══ OVERVIEW TAB ═══ -->
+      <div id="tab-overview" class="tab-content active" style="display:block;">
+        <h2 style="font-size:24px; font-weight:800; margin-bottom:24px; color:var(--text-primary);">
+          📊 Dashboard Overview
+        </h2>
+
+        <!-- Stats Cards -->
+        <div class="admin-stats" id="adminStatsGrid">
+          <div class="admin-stat-card tilt-card" data-tilt>
+            <div class="tilt-card-inner" style="display:flex; align-items:center; gap:18px; width:100%;">
+              <div class="admin-stat-icon cyan"><i class="fas fa-users"></i></div>
+              <div class="admin-stat-info">
+                <h4 id="totalUsers">0</h4>
+                <p>Total Users</p>
+              </div>
+            </div>
+          </div>
+          <div class="admin-stat-card tilt-card" data-tilt>
+            <div class="tilt-card-inner" style="display:flex; align-items:center; gap:18px; width:100%;">
+              <div class="admin-stat-icon green"><i class="fas fa-gamepad"></i></div>
+              <div class="admin-stat-info">
+                <h4 id="totalMatches">0</h4>
+                <p>Active Matches</p>
+              </div>
+            </div>
+          </div>
+          <div class="admin-stat-card tilt-card" data-tilt>
+            <div class="tilt-card-inner" style="display:flex; align-items:center; gap:18px; width:100%;">
+              <div class="admin-stat-icon gold"><i class="fas fa-clipboard-list"></i></div>
+              <div class="admin-stat-info">
+                <h4 id="totalRegistrations">0</h4>
+                <p>Registrations</p>
+              </div>
+            </div>
+          </div>
+          <div class="admin-stat-card tilt-card" data-tilt>
+            <div class="tilt-card-inner" style="display:flex; align-items:center; gap:18px; width:100%;">
+              <div class="admin-stat-icon red"><i class="fas fa-comment-dots"></i></div>
+              <div class="admin-stat-info">
+                <h4 id="totalFeedbacks">0</h4>
+                <p>Messages</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Batch Fill Chart -->
+        <div class="chart-container">
+          <div class="chart-title">📈 Batch Fill Rate (Latest Match)</div>
+          <div class="bar-chart" id="batchChart">
+            <div class="bar-item">
+              <div class="bar-value" id="batch1Val">0</div>
+              <div class="bar-fill" id="batch1Fill" style="height:4px;"></div>
+              <div class="bar-label">Batch 1</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-value" id="batch2Val">0</div>
+              <div class="bar-fill" id="batch2Fill" style="height:4px;"></div>
+              <div class="bar-label">Batch 2</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-value" id="batch3Val">0</div>
+              <div class="bar-fill" id="batch3Fill" style="height:4px;"></div>
+              <div class="bar-label">Batch 3</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="admin-control">
+          <h3><i class="fas fa-clock"></i> Recent Registrations</h3>
+          <div id="recentActivity" style="max-height:300px; overflow-y:auto;">
+            <p class="text-muted">No recent activity.</p>
+          </div>
+        </div>
       </div>
 
-      <div class="admin-control">
-        <h3>Create New Match</h3>
+      <!-- ═══ MATCHES TAB ═══ -->
+      <div id="tab-matches" class="tab-content">
+        <h2 style="font-size:24px; font-weight:800; margin-bottom:24px; color:var(--text-primary);">
+          🎮 Match Management
+        </h2>
+
+        <!-- Kill Tracker -->
+        <div class="admin-control" style="border-left:3px solid var(--red);">
+          <h3><i class="fas fa-skull-crossbones"></i> Update Kills</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label>Team Name</label>
+              <input id="killTeam" placeholder="Enter team name">
+            </div>
+            <div>
+              <label>Kill Count</label>
+              <input id="killCount" type="number" placeholder="0">
+            </div>
+          </div>
+          <button class="red-glow-btn w-full mt-md" onclick="saveKills()">
+            <i class="fas fa-skull"></i> Save Kills
+          </button>
+        </div>
+
+        <!-- Create Match -->
+        <div class="admin-control">
+          <h3><i class="fas fa-plus-circle"></i> Create New Match</h3>
+          <label>Match Title</label>
+          <input id="m-title" placeholder="e.g. Daily Scrims #1">
+          <label>Map Name</label>
+          <input id="m-map" placeholder="e.g. Bermuda / Purgatory">
+          <label>IDP Time (ID/Pass)</label>
+          <input id="m-time" placeholder="e.g. 7:30 PM">
+          <label>Live Stream Link</label>
+          <input id="m-link" placeholder="Paste YouTube/Loco link here">
+          <button onclick="saveMatch()" class="glow-btn w-full mt-md">
+            <i class="fas fa-save"></i> Create Match
+          </button>
+        </div>
         
-        <label style="color:#aaa; font-size:12px;">Match Title</label>
-        <input id="m-title" placeholder="e.g. Daily Scrims #1">
-        
-        <label style="color:#aaa; font-size:12px;">Map Name</label>
-        <input id="m-map" placeholder="e.g. Bermuda / Purgatory">
-        
-        <label style="color:#00e5ff; font-size:12px; font-weight:bold;">IDP Time (ID/Pass)</label>
-        <input id="m-time" placeholder="e.g. 7:30 PM">
-
-        <label style="color:#aaa; font-size:12px;">Live Stream Link</label>
-<input id="m-link" placeholder="Paste YouTube/Loco Channel Link here">
-
-        <button onclick="saveMatch()" class="glow-btn" style="width:100%; margin-top:10px;">Save Match</button>
+        <h3 style="color:var(--text-primary); margin-bottom:16px;">Existing Matches</h3>
+        <div id="adminMatchList"></div>
       </div>
-      
-      <h3>Existing Matches</h3>
-      <div id="adminMatchList"></div>
-    </div>
 
-    <div id="tab-users" class="tab-content">
-      <h3>Registered Users</h3>
-      <div id="adminUserList"></div>
-    </div>
-
-    <div id="tab-teams" class="tab-content">
-      <div class="admin-control">
-        <h3>Registration Control</h3>
-
-       <label style="color:#aaa;font-size:12px;">Countdown Minutes</label>
-<input id="countdownMinutes" type="number" placeholder="e.g. 30" 
-       style="width:100%;margin-bottom:10px;">
-
-<div style="display:flex; gap:10px;">
-  <button id="startBtn" onclick="openRegistration()" class="glow-btn">
-  Start Countdown
-</button>
-
-
-  <button onclick="closeRegistration()" class="red-glow-btn" style="flex:1;">
-    Stop Countdown
-  </button>
-</div>
-
-
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-          <button onclick="toggleReg(true)" class="glow-btn" style="flex:1;">Open Reg</button>
-          <button onclick="toggleReg(false)" class="red-glow-btn" style="flex:1;">Close Reg</button>
+      <!-- ═══ USERS TAB ═══ -->
+      <div id="tab-users" class="tab-content">
+        <div class="flex-between mb-md">
+          <h2 style="font-size:24px; font-weight:800; color:var(--text-primary);">
+            👥 User Management
+          </h2>
+          <button onclick="downloadUsersPDF()" class="ghost-btn" style="font-size:13px;">
+            <i class="fas fa-file-pdf"></i> Export PDF
+          </button>
         </div>
-        <p id="regStatusDisplay" style="font-weight:bold; color:#aaa;"></p>
+        <div class="search-bar">
+          <input id="userSearchInput" placeholder="Search users by team or mobile..." oninput="searchUsers()">
+        </div>
+        <div id="adminUserList"></div>
       </div>
 
-      <div class="admin-control">
-        <h3>Downloads</h3>
-        <div style="display: flex; gap: 10px;">
-          <button onclick="downloadAdminPDF()" class="glow-btn" style="flex:1;">Teams PDF</button>
-          <button onclick="downloadUsersPDF()" class="glow-btn" style="flex:1;">Users PDF</button>
+      <!-- ═══ TEAMS TAB ═══ -->
+      <div id="tab-teams" class="tab-content">
+        <h2 style="font-size:24px; font-weight:800; margin-bottom:24px; color:var(--text-primary);">
+          🛡️ Team Management
+        </h2>
+
+        <div class="admin-control">
+          <h3><i class="fas fa-toggle-on"></i> Registration Control</h3>
+          <div style="display:flex; gap:12px; margin-bottom:12px;">
+            <button onclick="toggleReg(true)" class="glow-btn" style="flex:1;">
+              <i class="fas fa-lock-open"></i> Open
+            </button>
+            <button onclick="toggleReg(false)" class="red-glow-btn" style="flex:1;">
+              <i class="fas fa-lock"></i> Close
+            </button>
+          </div>
+          <p id="regStatusDisplay" style="font-weight:700; font-size:14px; text-align:center;"></p>
+        </div>
+
+        <div class="admin-control">
+          <h3><i class="fas fa-download"></i> Export Data</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+            <button onclick="downloadAdminPDF()" class="glow-btn">
+              <i class="fas fa-file-pdf"></i> Teams PDF
+            </button>
+            <button onclick="downloadUsersPDF()" class="glow-btn">
+              <i class="fas fa-file-pdf"></i> Users PDF
+            </button>
+            <button onclick="exportCSV()" class="gold-glow-btn">
+              <i class="fas fa-file-csv"></i> CSV
+            </button>
+          </div>
+        </div>
+
+        <h3 style="color:var(--text-primary); margin-bottom:16px;">Registered Teams</h3>
+        <div class="search-bar">
+          <input id="teamSearchInput" placeholder="Search teams..." oninput="searchTeams()">
+        </div>
+        <div id="adminTeamList"></div>
+      </div>
+
+      <!-- ═══ FEEDBACKS TAB ═══ -->
+      <div id="tab-feedbacks" class="tab-content">
+        <div class="flex-between mb-md">
+          <h2 style="font-size:24px; font-weight:800; color:var(--text-primary);">
+            💬 Player Messages
+          </h2>
+          <button onclick="clearFeedbacks()" class="red-glow-btn" style="font-size:12px; padding:8px 16px;">
+            <i class="fas fa-trash"></i> Clear All
+          </button>
+        </div>
+        <div id="adminFeedbackList"></div>
+      </div>
+
+      <!-- ═══ SETTINGS TAB ═══ -->
+      <div id="tab-settings" class="tab-content">
+        <h2 style="font-size:24px; font-weight:800; margin-bottom:24px; color:var(--text-primary);">
+          ⚙️ Settings
+        </h2>
+
+        <div class="admin-control" style="border-left:3px solid var(--gold);">
+          <h3><i class="fas fa-bullhorn"></i> Announcement</h3>
+          <input id="announcementText" placeholder="Type announcement message...">
+          <div style="display:flex; gap:10px; margin-top:12px;">
+            <button class="gold-glow-btn" onclick="saveAnnouncement()" style="flex:1;">
+              <i class="fas fa-save"></i> Save
+            </button>
+            <button class="red-glow-btn" onclick="clearAnnouncement()" style="flex:1;">
+              <i class="fas fa-times"></i> Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-control" style="border-left:3px solid var(--cyan);">
+          <h3><i class="fas fa-trophy"></i> Standings Image</h3>
+          <input id="standingsInput" placeholder="Paste Image URL (e.g., https://imgur.com/...)">
+          <button onclick="saveStandingsImage()" class="glow-btn w-full mt-md">
+            <i class="fas fa-upload"></i> Update Image
+          </button>
+        </div>
+
+        <div class="admin-control" style="border-left:3px solid var(--purple);">
+          <h3><i class="fas fa-credit-card"></i> Payment Settings</h3>
+          <label>Payment Mode</label>
+          <select id="paymentMode" onchange="savePaymentSettings()">
+            <option value="free">Free Mode</option>
+            <option value="paid">Paid Mode (QR)</option>
+          </select>
+
+          <div id="qrSection" style="display:none; margin-top:12px;">
+            <label>QR Code Image URL</label>
+            <input id="qrCodeUrl" placeholder="https://..." oninput="savePaymentSettings()">
+            <img id="previewQR" src="" style="width:120px; margin-top:10px; border-radius:8px; border:1px solid var(--border);">
+          </div>
+        </div>
+
+        <div class="admin-control" style="border-left:3px solid var(--red);">
+          <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">These actions cannot be undone.</p>
+          <div style="display:flex; gap:10px;">
+            <button onclick="clearAllRegistrations()" class="red-glow-btn" style="flex:1; font-size:12px;">
+              Clear All Registrations
+            </button>
+            <button onclick="clearAllData()" class="red-glow-btn" style="flex:1; font-size:12px;">
+              Reset Everything
+            </button>
+          </div>
         </div>
       </div>
 
-      <h3>Registered Teams</h3>
-      <div id="adminTeamList"></div>
     </div>
-
-    <div id="tab-feedbacks" class="tab-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h3>Player Messages</h3>
-        <button onclick="clearFeedbacks()" class="red-glow-btn" style="padding:6px 12px; font-size:12px;">Clear All</button>
-      </div>
-      <div id="adminFeedbackList"></div>
-    </div>
-
-    <div id="tab-settings" class="tab-content">
-      
-      <div class="admin-control" style="border-left: 4px solid gold;">
-        <h3 style="color:gold;">📢 Announcement</h3>
-        <input id="announcementText" placeholder="Type announcement..." style="width:100%;padding:10px;margin-top:5px;">
-        <div style="display:flex; gap:10px; margin-top:10px;">
-           <button class="gold-glow-btn" onclick="saveAnnouncement()" style="flex:1;">Save</button>
-           <button class="red-glow-btn" onclick="clearAnnouncement()" style="flex:1;">Clear</button>
-        </div>
-      </div>
-
-      <div class="admin-control">
-        <h3>Payment Settings</h3>
-        <select id="paymentMode" onchange="savePaymentSettings()">
-          <option value="free">Free Mode</option>
-          <option value="paid">Paid Mode (QR)</option>
-        </select>
-
-        <div id="qrSection" style="display:none; margin-top:10px;">
-          <label>QR Code Image URL:</label>
-          <input id="qrCodeUrl" placeholder="https://..." oninput="savePaymentSettings()">
-          <img id="previewQR" src="" style="width:100px; margin-top:5px; border-radius:5px; border:1px solid #333;">
-        </div>
-      </div>
-    </div>
-
   </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-const supabase = window.supabase.createClient(
-  "https://gtqxjuxppfuzorxlmmqq.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0cXhqdXhwcGZ1em9yeGxtbXFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NzQ4MzgsImV4cCI6MjA4NjU1MDgzOH0.jzLkIGmYDZCBQ9pPUY5LgYA4ImYIYwzvQ5bh2RMEXGc"
-);
-</script>
-
-<script src="script.js"></script>
-
+  <script src="script.js"></script>
   
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-       if(typeof showTab === 'function') {
-          showTab('matches');
-       }
+      if(typeof showTab === 'function') {
+        showTab('overview');
+      }
     });
   </script>
-
-</div>  <!-- CLOSE admin-panel -->
 </body>
 </html>

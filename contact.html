@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Nighthawks FF | Contact & Rules</title>
+  <meta name="description" content="Contact Nighthawks FF, read tournament rules, and get answers to frequently asked questions.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Dynamic particle canvas -->
+  <canvas id="canvas-particles"></canvas>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Navbar -->
+  <div class="nav-bar">
+    <div class="nav-title">
+      <img src="nighthawks-logo3.png" alt="NHK">
+      <span class="glitch-header" data-text="Nighthawks FF">Nighthawks FF</span>
+    </div>
+    <div class="nav-right">
+      <a href="dashboard.html"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    </div>
+  </div>
+
+  <div class="page">
+    <h1 class="page-title">Contact & <span>Rules</span></h1>
+
+    <div class="contact-grid">
+      
+      <!-- Contact Form -->
+      <div class="contact-form-section tilt-card" data-tilt>
+        <div class="tilt-card-inner">
+          <h3 style="color:var(--primary); margin-bottom:20px; font-size:18px;">
+            <i class="fas fa-paper-plane"></i> Send us a Message
+          </h3>
+          <div>
+            <label style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Your Name</label>
+            <input id="contactName" placeholder="Enter your name or team name">
+            
+            <label style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-top:12px; display:block;">Subject</label>
+            <select id="contactSubject">
+              <option value="">Select a topic...</option>
+              <option value="general">General Inquiry</option>
+              <option value="registration">Registration Issue</option>
+              <option value="payment">Payment Problem</option>
+              <option value="report">Report a Player</option>
+              <option value="suggestion">Suggestion</option>
+              <option value="other">Other</option>
+            </select>
+            
+            <label style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-top:12px; display:block;">Message</label>
+            <textarea id="contactMessage" class="feedback-input" style="height:120px;" placeholder="Describe your issue or question in detail..."></textarea>
+            
+            <button class="glow-btn w-full mt-md" onclick="sendContactMessage()">
+              <i class="fas fa-send"></i> Send Message
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="contact-info-section">
+        <div class="info-card tilt-card" data-tilt>
+          <div class="tilt-card-inner" style="display:flex; align-items:center; gap:16px; width:100%;">
+            <div class="info-card-icon">📱</div>
+            <div class="info-card-text">
+              <h4>WhatsApp</h4>
+              <p>+91 91132 77013</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card tilt-card" data-tilt>
+          <div class="tilt-card-inner" style="display:flex; align-items:center; gap:16px; width:100%;">
+            <div class="info-card-icon">🎮</div>
+            <div class="info-card-text">
+              <h4>Discord</h4>
+              <p>Nighthawks FF Community</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card tilt-card" data-tilt>
+          <div class="tilt-card-inner" style="display:flex; align-items:center; gap:16px; width:100%;">
+            <div class="info-card-icon">📸</div>
+            <div class="info-card-text">
+              <h4>Instagram</h4>
+              <p>@nighthawks_ff</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card tilt-card" data-tilt>
+          <div class="tilt-card-inner" style="display:flex; align-items:center; gap:16px; width:100%;">
+            <div class="info-card-icon">🕐</div>
+            <div class="info-card-text">
+              <h4>Response Time</h4>
+              <p>Within 24 hours</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tournament Rules Summary -->
+        <div class="admin-control" style="border-left:3px solid var(--gold);">
+          <h3 style="font-size:16px;"><i class="fas fa-scroll"></i> Quick Rules</h3>
+          <ul style="list-style:none; padding:0; font-size:13px; color:var(--text-secondary); line-height:2;">
+            <li>✅ Max 4 players per team</li>
+            <li>✅ Registration closes at 9:00 PM daily</li>
+            <li>✅ 12 teams per batch (3 batches)</li>
+            <li>✅ IGL must submit team details</li>
+            <li>⛔ No hacking, modding, or emulators</li>
+            <li>⛔ No duplicate registrations</li>
+            <li>⛔ Abusive behavior = instant ban</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <h2 class="page-title" style="margin-top:32px;">Frequently Asked <span>Questions</span></h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How do I register my team for a match?
+        </button>
+        <div class="faq-answer">
+          Go to the Dashboard, find an available match, click "Register", enter your 4 player names (Player 1 is the IGL), and submit. You'll be auto-assigned to a batch with available slots.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What are batches and how do they work?
+        </button>
+        <div class="faq-answer">
+          Each match has 3 batches with different time slots. Batch 1: 5-6 PM, Batch 2: 6-7 PM, Batch 3: 7-9 PM. Each batch holds up to 12 teams. You're automatically assigned to the first batch with open slots.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Where do I get the Room ID and Password?
+        </button>
+        <div class="faq-answer">
+          The admin will set the Room ID and Password before the match starts. You can find them in the "My Matches" section once they're published. Make sure to check before your batch time.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What happens if registration closes?
+        </button>
+        <div class="faq-answer">
+          The admin controls when registration opens and closes. Registration also auto-clears at 9:00 PM daily. If registration is closed, you'll see a message on the Dashboard. Try again when it reopens.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How do I report a cheater or issue?
+        </button>
+        <div class="faq-answer">
+          Use the "Player Support" button (💬) on the Dashboard, or fill out the contact form on this page with "Report a Player" as the subject. Include the player's name, team, and details of the violation.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          I forgot my password. How do I reset it?
+        </button>
+        <div class="faq-answer">
+          On the login page, click "Forgot password?" and enter your registered mobile number. You'll receive an OTP to verify your identity, then you can set a new password.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      
+      if (!isOpen) {
+        item.classList.add('open');
+      }
+    }
+
+    function sendContactMessage() {
+      const name = document.getElementById('contactName').value.trim();
+      const subject = document.getElementById('contactSubject').value;
+      const message = document.getElementById('contactMessage').value.trim();
+
+      if (!name || !subject || !message) {
+        showToast('Please fill all fields', 'error');
+        if (typeof CyberSynth !== 'undefined') CyberSynth.playWarning();
+        return;
+      }
+
+      let feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+      feedbacks.push({
+        team: name,
+        mobile: 'Contact Form',
+        message: `[${subject.toUpperCase()}] ${message}`,
+        date: new Date().toLocaleString()
+      });
+      localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+      if (typeof CyberSynth !== 'undefined') CyberSynth.playSuccess();
+      showToast('Message sent successfully! We\'ll respond within 24 hours.', 'success');
+      
+      document.getElementById('contactName').value = '';
+      document.getElementById('contactSubject').value = '';
+      document.getElementById('contactMessage').value = '';
+    }
+  </script>
+</body>
+</html>
